@@ -1,0 +1,420 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Smart Study Generator — Solution Report</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 14px; line-height: 1.65; color: #1f2328;
+    background: #ffffff; padding: 32px 16px 48px;
+  }
+  .page { max-width: 760px; margin: 0 auto; }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #1E3A5F 0%, #2E86AB 100%);
+    border-radius: 14px; padding: 34px 36px; color: white; margin-bottom: 32px;
+  }
+  .hero-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+  .hero h1 { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+  .hero p  { font-size: 13px; opacity: 0.88; max-width: 520px; }
+  .hero-meta { text-align: right; font-size: 12px; opacity: 0.8; line-height: 1.8; }
+  .badges  { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+  .badge {
+    background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 500;
+  }
+
+  /* Section headers */
+  h2 {
+    font-size: 15px; font-weight: 700; color: #1E3A5F;
+    border-left: 4px solid #2E86AB; padding-left: 10px;
+    margin: 30px 0 14px;
+  }
+  h3 { font-size: 13px; font-weight: 700; color: #1E3A5F; margin-bottom: 5px; }
+
+  /* Challenge box */
+  .challenge-box {
+    background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px;
+    padding: 18px 20px; margin-bottom: 10px;
+  }
+  .challenge-box p { color: #7c3d12; font-size: 13px; line-height: 1.7; }
+
+  /* 2-col grid */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* Objective cards */
+  .obj-card {
+    background: #f7f8fa; border: 1px solid #e5e7eb;
+    border-radius: 10px; padding: 16px 16px;
+  }
+  .obj-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .obj-num {
+    background: #2E86AB; color: white; border-radius: 50%;
+    width: 24px; height: 24px; font-size: 12px; font-weight: 700;
+    text-align: center; line-height: 24px; flex-shrink: 0;
+  }
+  .obj-card h3 { margin: 0; }
+  .obj-card p  { font-size: 12px; color: #57606a; margin-bottom: 6px; }
+  .obj-card ul { font-size: 12px; color: #57606a; padding-left: 16px; }
+  .obj-card li { margin-bottom: 3px; }
+
+  /* Feature table */
+  table { width: 100%; border-collapse: collapse; margin-bottom: 4px; font-size: 13px; }
+  th {
+    background: #1E3A5F; color: white; text-align: left;
+    padding: 9px 12px; font-size: 12px; font-weight: 600;
+  }
+  td { padding: 8px 12px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+  tr:nth-child(even) td { background: #f7f8fa; }
+  .mono {
+    font-family: "Consolas","Courier New",monospace;
+    background: #f0f4ff; border-radius: 3px; padding: 1px 5px;
+    font-size: 11px; color: #3b82d4;
+  }
+  .tag {
+    display: inline-block; border-radius: 4px; padding: 2px 7px;
+    font-size: 11px; font-weight: 600;
+  }
+  .tag-ai   { background: #dbeafe; color: #1d4ed8; }
+  .tag-ui   { background: #dcfce7; color: #15803d; }
+  .tag-pred { background: #fef3c7; color: #92400e; }
+
+  /* Agentic rows */
+  .agent-list { border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden; }
+  .agent-row {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 13px 16px; border-bottom: 1px solid #e5e7eb;
+    background: #ffffff;
+  }
+  .agent-row:nth-child(even) { background: #f7f8fa; }
+  .agent-row:last-child { border-bottom: none; }
+  .agent-icon { font-size: 22px; min-width: 30px; text-align: center; padding-top: 1px; }
+  .agent-body h3 { font-size: 13px; margin-bottom: 3px; }
+  .agent-body p  { font-size: 12px; color: #57606a; margin: 0; }
+
+  /* Feedback loop */
+  .loop {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #f0f7ff; border: 1px solid #bfdbfe; border-radius: 10px;
+    padding: 16px 18px; margin: 12px 0; flex-wrap: wrap; gap: 8px;
+  }
+  .loop-step {
+    background: #1E3A5F; color: white; border-radius: 8px;
+    padding: 9px 14px; font-size: 12px; font-weight: 600; text-align: center;
+  }
+  .loop-arrow { color: #2E86AB; font-size: 20px; font-weight: 900; }
+  .loop-note { font-size: 12px; color: #57606a; margin-top: 6px; }
+
+  /* Tech pills */
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .pill {
+    border: 1px solid #e5e7eb; border-radius: 20px;
+    padding: 5px 13px; font-size: 12px; font-weight: 500;
+  }
+  .pill-ibm { background: #1E3A5F; color: white; border-color: #1E3A5F; }
+  .pill-st  { background: #ff4b4b; color: white; border-color: #ff4b4b; }
+  .pill-py  { background: #f7f8fa; color: #1f2328; }
+
+  /* Config box */
+  .config-box {
+    background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px;
+    padding: 14px 18px; font-size: 12.5px; color: #14532d; line-height: 2;
+  }
+  .config-box code {
+    font-family: monospace; background: #dcfce7;
+    padding: 1px 6px; border-radius: 3px; font-size: 12px;
+  }
+
+  /* Novelty box */
+  .novelty-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .novelty-card {
+    background: linear-gradient(135deg, #f0f7ff, #f7f8fa);
+    border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px 16px;
+  }
+  .novelty-card h3 { color: #1E3A5F; font-size: 13px; margin-bottom: 5px; }
+  .novelty-card p  { font-size: 12px; color: #57606a; }
+
+  /* Footer */
+  .footer {
+    margin-top: 44px; padding-top: 14px; border-top: 1px solid #e5e7eb;
+    text-align: center; font-size: 12px; color: #57606a;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  
+  <div class="hero">
+    <div class="hero-top">
+      <div>
+        <h1>🧠 Smart Study Generator</h1>
+        <p>An agentic AI-powered adaptive study companion that personalises and streamlines learning for students — built on IBM Granite, IBM watsonx.ai, and Streamlit.</p>
+      </div>
+      <div class="hero-meta">
+        <div>🤖 IBM Granite 13B Instruct v2</div>
+        <div>☁️ IBM watsonx.ai · us-south</div>
+        <div>🐍 Python + Streamlit</div>
+        <div>📦 8 Interactive Tabs</div>
+      </div>
+    </div>
+    <div class="badges">
+      <span class="badge">Agentic AI Loop</span>
+      <span class="badge">Multimodal Input</span>
+      <span class="badge">Exam Predictor</span>
+      <span class="badge">Live Dashboard</span>
+      <span class="badge">Context-Aware Tutor</span>
+      <span class="badge">Adaptive Study Plans</span>
+    </div>
+  </div>
+
+  
+  <h2>The Challenge</h2>
+  <div class="challenge-box">
+    <p>Students face an overwhelming flood of scattered, unorganised information — lecture notes, textbooks, research papers, YouTube tutorials, and online resources. Traditional study tools provide only <strong>static notes or flashcards</strong>, failing to adapt dynamically to individual learning pace or style. Students struggle to find the right material, summarise key concepts, and stay exam-ready. The challenge: move beyond static resources toward an <strong>intelligent, adaptive study companion</strong>.</p>
+  </div>
+
+  
+  <h2>Objectives → Implementation Map</h2>
+  <div class="grid-2">
+
+    <div class="obj-card">
+      <div class="obj-head">
+        <div class="obj-num">1</div>
+        <h3>Fuse Learning Resources</h3>
+      </div>
+      <p>Aggregate content from multiple source types into structured, easy-to-digest study material.</p>
+      <ul>
+        <li>Upload PDF, DOCX, TXT, PNG/JPG files</li>
+        <li>Paste raw notes or articles directly</li>
+        <li>3 built-in sample topic libraries (ML, Data Structures, Thermodynamics)</li>
+        <li>AI summaries at brief / medium / detailed depth</li>
+        <li>Key topic extraction via <span class="mono">extract_key_topics()</span></li>
+        <li>Mnemonic generator for retention</li>
+      </ul>
+    </div>
+
+    <div class="obj-card">
+      <div class="obj-head">
+        <div class="obj-num">2</div>
+        <h3>Multimodal Input</h3>
+      </div>
+      <p>Accept diverse input types; generate summaries, flashcards, and concept maps.</p>
+      <ul>
+        <li>PDF extraction — PyMuPDF (fitz)</li>
+        <li>Image OCR — Pillow + pytesseract</li>
+        <li>DOCX parsing — python-docx</li>
+        <li>AI Flashcard deck — flip, shuffle, difficulty filter</li>
+        <li>Visual Concept Map — node/edge knowledge graph</li>
+        <li>Context-aware AI Tutor chat (RAG-style)</li>
+      </ul>
+    </div>
+
+    <div class="obj-card">
+      <div class="obj-head">
+        <div class="obj-num">3</div>
+        <h3>Predictive &amp; Agentic Layer</h3>
+      </div>
+      <p>Personalised study plans, topic prioritisation, predictive alerts.</p>
+      <ul>
+        <li>AI Study Plan — n-day schedule with Gantt chart</li>
+        <li>Exam Predictor — probability-ranked topics with priority labels (high/medium/low)</li>
+        <li>Predictive alerts — "Focus on Topic X — frequently asked in exams"</li>
+        <li>Weak-area analysis from cumulative quiz history</li>
+        <li>Streak tracking &amp; study-time monitoring</li>
+      </ul>
+    </div>
+
+    <div class="obj-card">
+      <div class="obj-head">
+        <div class="obj-num">4</div>
+        <h3>Visualise Study Progress</h3>
+      </div>
+      <p>Real-time dashboard — milestones, weak areas, quizzes, performance forecasts.</p>
+      <ul>
+        <li>4 live metric cards — avg score, quizzes taken, streak, study time</li>
+        <li>Weekly activity bar chart (Plotly)</li>
+        <li>Topic performance radar chart</li>
+        <li>Quiz history table with timestamps &amp; scores</li>
+        <li>Weak / strong area progress bars</li>
+        <li>Exam topic probability horizontal bar chart</li>
+      </ul>
+    </div>
+
+  </div>
+
+  
+  <h2>Application Features — 8 Tabs</h2>
+  <table>
+    <tr><th>Tab</th><th>Feature</th><th>AI Method</th><th>Type</th></tr>
+    <tr>
+      <td>📊 Dashboard</td>
+      <td>Metrics, weekly chart, radar, quiz history, weak/strong areas</td>
+      <td>—</td>
+      <td><span class="tag tag-ui">Analytics</span></td>
+    </tr>
+    <tr>
+      <td>📄 Summarize</td>
+      <td>AI summary at 3 depth levels + key topic tags + mnemonics</td>
+      <td><span class="mono">summarize_content()</span></td>
+      <td><span class="tag tag-ai">AI Agent</span></td>
+    </tr>
+    <tr>
+      <td>🃏 Flashcards</td>
+      <td>Auto-generated flip cards, difficulty filter, shuffle</td>
+      <td><span class="mono">generate_flashcards()</span></td>
+      <td><span class="tag tag-ai">AI Agent</span></td>
+    </tr>
+    <tr>
+      <td>❓ Quiz</td>
+      <td>MCQ quiz, auto-scoring, explanations, retake</td>
+      <td><span class="mono">generate_quiz()</span></td>
+      <td><span class="tag tag-ai">AI Agent</span></td>
+    </tr>
+    <tr>
+      <td>📅 Study Plan</td>
+      <td>Personalised n-day schedule with Gantt chart + study tips</td>
+      <td><span class="mono">generate_study_plan()</span></td>
+      <td><span class="tag tag-pred">Agentic</span></td>
+    </tr>
+    <tr>
+      <td>🗺️ Concept Map</td>
+      <td>Visual knowledge graph — nodes, edges, central concept</td>
+      <td><span class="mono">generate_concept_map()</span></td>
+      <td><span class="tag tag-ai">AI Agent</span></td>
+    </tr>
+    <tr>
+      <td>💬 AI Tutor</td>
+      <td>Context-aware Q&amp;A chat with 6 quick-prompt shortcuts</td>
+      <td><span class="mono">answer_question()</span></td>
+      <td><span class="tag tag-ai">AI Agent</span></td>
+    </tr>
+    <tr>
+      <td>🔮 Exam Predictor</td>
+      <td>Probability-ranked exam topic predictions + weak-area drill</td>
+      <td><span class="mono">predict_exam_topics()</span></td>
+      <td><span class="tag tag-pred">Agentic</span></td>
+    </tr>
+  </table>
+
+  
+  <h2>Role of Agentic AI — IBM Granite</h2>
+  <div class="agent-list">
+    <div class="agent-row">
+      <div class="agent-icon">🤖</div>
+      <div class="agent-body">
+        <h3>Single Model, Ten Autonomous Roles</h3>
+        <p>IBM Granite 13B (<span class="mono">ibm/granite-13b-instruct-v2</span>) acts simultaneously as summariser, quiz master, study planner, concept mapper, exam predictor, mnemonic creator, and personal tutor. Each role is a self-contained agent task that executes without human curation.</p>
+      </div>
+    </div>
+    <div class="agent-row">
+      <div class="agent-icon">📎</div>
+      <div class="agent-body">
+        <h3>Context Injection — Grounded RAG</h3>
+        <p>The student's own uploaded content is injected into every AI prompt. The tutor and exam predictor receive up to 2,000 characters of personal study material, ensuring responses are grounded in the learner's specific content — not generic knowledge.</p>
+      </div>
+    </div>
+    <div class="agent-row">
+      <div class="agent-icon">📐</div>
+      <div class="agent-body">
+        <h3>Structured Output Contract</h3>
+        <p>Every agent call returns typed JSON — flashcard arrays, quiz objects, study plan days, exam prediction scores. Schema-enforced prompts + <span class="mono">_parse_json_list()</span> regex extraction enable direct rendering into charts and cards.</p>
+      </div>
+    </div>
+    <div class="agent-row">
+      <div class="agent-icon">🔁</div>
+      <div class="agent-body">
+        <h3>Adaptive Feedback Loop</h3>
+        <p>Quiz results feed <span class="mono">analyze_weak_areas()</span>; diagnostics reshape the dashboard radar, predictive alerts, and exam topic priorities — a true observe → reason → act cycle that personalises over time.</p>
+      </div>
+    </div>
+    <div class="agent-row">
+      <div class="agent-icon">🛡️</div>
+      <div class="agent-body">
+        <h3>Resilient Fallback</h3>
+        <p><span class="mono">_fallback_response()</span> and <span class="mono">_default_study_plan()</span> ensure full demo-mode operation if watsonx.ai is unreachable — zero broken UI, zero crashes.</p>
+      </div>
+    </div>
+  </div>
+
+  
+  <h2>Adaptive Intelligence Loop</h2>
+  <div class="loop">
+    <div class="loop-step">📝 Student Takes Quiz</div>
+    <div class="loop-arrow">→</div>
+    <div class="loop-step">📊 record_quiz_result()</div>
+    <div class="loop-arrow">→</div>
+    <div class="loop-step">🤖 analyze_weak_areas()</div>
+    <div class="loop-arrow">→</div>
+    <div class="loop-step">⚠️ Alerts &amp; Dashboard Update</div>
+    <div class="loop-arrow">→</div>
+    <div class="loop-step">🔮 Exam Predictor Reprioritises</div>
+  </div>
+  <p class="loop-note">This <strong>observe → reason → act</strong> cycle makes the system continuously adaptive — every quiz taken reshapes the study plan, alerts, and exam priorities automatically, without any teacher or manual input.</p>
+
+  
+  <h2>Novelty &amp; Uniqueness</h2>
+  <div class="novelty-grid">
+    <div class="novelty-card">
+      <h3>🎯 One Model, All Roles</h3>
+      <p>Unlike tools using separate engines for each task, IBM Granite alone handles summarisation, quizzes, plans, concept maps, predictions, and tutoring — all via schema-enforced prompt engineering.</p>
+    </div>
+    <div class="novelty-card">
+      <h3>📚 Content-Personalised AI</h3>
+      <p>Every AI call is grounded in the student's own uploaded content. The system never responds generically — it always reasons about the learner's specific material.</p>
+    </div>
+    <div class="novelty-card">
+      <h3>🔄 Self-Closing Adaptive Loop</h3>
+      <p>Quiz performance autonomously reshapes dashboard insights, weak-area focus, and exam topic priorities — no teacher or admin intervention required.</p>
+    </div>
+    <div class="novelty-card">
+      <h3>🔮 Predictive Exam Intelligence</h3>
+      <p>The Exam Predictor assigns probability scores and priority levels to topics based on content analysis — functioning as an intelligent exam coach, not just a summariser.</p>
+    </div>
+  </div>
+
+  
+  <h2>Tech Stack</h2>
+  <div class="pills">
+    <span class="pill pill-ibm">IBM Granite 13B Instruct v2</span>
+    <span class="pill pill-ibm">IBM watsonx.ai</span>
+    <span class="pill pill-ibm">IBM Cloud (us-south)</span>
+    <span class="pill pill-st">Streamlit 1.28+</span>
+    <span class="pill pill-py">Plotly — charts</span>
+    <span class="pill pill-py">PyMuPDF — PDF</span>
+    <span class="pill pill-py">python-docx — DOCX</span>
+    <span class="pill pill-py">Pillow — image OCR</span>
+    <span class="pill pill-py">pandas — tables</span>
+    <span class="pill pill-py">python-dotenv</span>
+  </div>
+
+  
+  <h2>IBM Cloud Configuration</h2>
+  <div class="config-box">
+    <strong>Project ID:</strong> <code>8a39dfde-3880-4b31-8270-248a9785f594</code><br />
+    <strong>Endpoint:</strong> <code>https://us-south.ml.cloud.ibm.com</code><br />
+    <strong>Model:</strong> <code>ibm/granite-13b-instruct-v2</code><br />
+    <strong>Max New Tokens:</strong> 1024  ·  <strong>Temperature:</strong> 0.7  ·  <strong>Top-P:</strong> 0.9  ·  <strong>Repetition Penalty:</strong> 1.1
+  </div>
+
+  
+  <h2>Project Structure</h2>
+  <table>
+    <tr><th>File</th><th>Responsibility</th></tr>
+    <tr><td><span class="mono">app.py</span></td><td>Main Streamlit app — 8 tabs, sidebar, header, predictive alerts, footer</td></tr>
+    <tr><td><span class="mono">modules/granite_ai.py</span></td><td>IBM Granite wrapper — 10 AI agent methods + JSON parsing + fallbacks</td></tr>
+    <tr><td><span class="mono">modules/content_processor.py</span></td><td>PDF / DOCX / image OCR / text extraction + built-in sample topic library</td></tr>
+    <tr><td><span class="mono">modules/study_planner.py</span></td><td>Session state init, quiz recording, streak tracking, analytics, alert engine</td></tr>
+    <tr><td><span class="mono">modules/ui_components.py</span></td><td>Reusable styled components — metric cards, alerts, progress bars, chat bubbles, concept map</td></tr>
+    <tr><td><span class="mono">requirements.txt</span></td><td>All Python dependencies including ibm-watsonx-ai</td></tr>
+    <tr><td><span class="mono">.streamlit/config.toml</span></td><td>Streamlit Cloud deployment config + branded theme</td></tr>
+  </table>
+
+  <div class="footer">Made with IBM Bob</div>
+</div>
+</body>
+</html>
